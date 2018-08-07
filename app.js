@@ -34,19 +34,15 @@ app.get('/api/:gpu', function(req, res) {
   var gpu = req.params.gpu;
 
   // use the redis client to get the cached coins
-  client.get(gpu, (error, result) => {
-
+  client.hget(gpu, "best", (error, result) => {
       if (result) {
-        console.log(result)
-        console.log(result[0])
         // the result exists in our cache - return it to our user immediately
-        res.send({ "coins": result, "source": "redis cache" });
+        res.send({ "coins": JSON.parse(result), "source": "redis cache" });
       } else {
         // we couldn't find the gpu's results in our cache, so get it
         // from the WhatToMine API
         getMostProfitableCoin(gpu)
           .then((data) => {
-            console.log("data", data.data)
             return data.data.coins
           })
           .then((coins) => {
@@ -57,16 +53,14 @@ app.get('/api/:gpu', function(req, res) {
                 biggest.name = i
               }
             }
-            console.log(biggest)
-            // store the coins in our cache with an expiry of 2 minutes (120s)
-            // client.set(gpu, coins.coins, (err, val) => {
-            //   if (err) {
-            //     throw err
-            //   } else {
-            //     // return the result to the user
-            //     res.send({ "coins": coins.coins});
-            //   }
-            // });
+            client.hset(gpu, "best", JSON.stringify(biggest), (err, val) => {
+              if (err) {
+                throw err;
+              } else {
+                // return the result to the user
+                res.send({ "coins": biggest});
+              }
+            });
           }).catch((response) => {
             if (response.status === 404){
               res.send('An error occurred!');
