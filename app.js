@@ -3,6 +3,7 @@ var app = require('express')();
 var responseTime = require('response-time')
 var axios = require('axios');
 var redis = require('redis');
+var cluster = require('cluster');
 
 // create a new redis client and connect to our local redis instance
 var client = redis.createClient();
@@ -37,7 +38,7 @@ app.get('/api/:gpu', function(req, res) {
   client.hget(gpu, "best", (error, result) => {
       if (result) {
         // the result exists in our cache - return it to our user immediately
-        res.send({ "coins": JSON.parse(result), "source": "redis cache" });
+        res.send({ "most_profitable_coin": JSON.parse(result), "source": "redis cache" });
       } else {
         // we couldn't find the gpu's results in our cache, so get it
         // from the WhatToMine API
@@ -53,6 +54,7 @@ app.get('/api/:gpu', function(req, res) {
                 biggest.name = i
               };
             };
+            // store most profitable coin in redis cache
             client.hset(gpu, "best", JSON.stringify(biggest), (err, val) => {
               if (err) {
                 throw err;
@@ -60,7 +62,7 @@ app.get('/api/:gpu', function(req, res) {
                 // cached call deletes in 2 minutes (120 seconds) 
                 client.expire(gpu, 120, redis.print)
                 // return the result to the user
-                res.send({ "coins": biggest});
+                res.send({ "most_profitable_coin": biggest});
               };
             });
           }).catch((response) => {

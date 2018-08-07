@@ -12,7 +12,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "express": "^4.16.3",
+    "pm2": "^3.0.3",
     "redis": "^2.8.0",
-    "response-time": "^2.3.2"
+    "response-time": "^2.3.2",
+    "winston": "^3.0.0"
   }
 }
