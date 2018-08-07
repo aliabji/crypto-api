@@ -38,12 +38,13 @@ app.get('/api/:gpu', function(req, res) {
   client.hget(gpu, "best", (error, result) => {
       if (result) {
         // the result exists in our cache - return it to our user immediately
-        res.send({ "most_profitable_coin": JSON.parse(result), "source": "redis cache" });
+        res.send({ "most_profitable_coin": JSON.parse(result) });
       } else {
         // we couldn't find the gpu's results in our cache, so get it
         // from the WhatToMine API
         getMostProfitableCoin(gpu)
           .then((data) => {
+            console.log(data)
             return data.data.coins
           })
           .then((coins) => {
@@ -60,7 +61,7 @@ app.get('/api/:gpu', function(req, res) {
                   difficulty: coins[i].difficulty,
                   exchange_rate: coins[i].exchange_rate,
                   estimated_rewards: coins[i].estimated_rewards,
-                  profitability_1hr: coins[i].profitability
+                  profitability_1hr: `${coins[i].profitability}% compared to Ethereum`
                 }
               };
             };
@@ -68,6 +69,7 @@ app.get('/api/:gpu', function(req, res) {
             client.hset(gpu, "best", JSON.stringify(biggest), (err, val) => {
               if (err) {
                 throw err;
+                res.send(err)
               } else {
                 // cached call deletes in 2 minutes (120 seconds) 
                 client.expire(gpu, 120, redis.print)
