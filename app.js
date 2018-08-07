@@ -49,9 +49,19 @@ app.get('/api/:gpu', function(req, res) {
           .then((coins) => {
             let biggest = new Object;
             for (var i in coins) {
-              if (coins[i].profitability > biggest.profitability || biggest.profitability === undefined) {
-                biggest = coins[i]
-                biggest.name = i
+              if (coins[i].profitability > biggest.profitability_1hr || biggest.profitability_1hr === undefined) {
+                console.log(coins[i], "here")
+                biggest = {
+                  name: i,
+                  ticker: coins[i].tag,
+                  algorithm: coins[i].algorithm,
+                  block_reward: coins[i].block_reward,
+                  block_time: coins[i].block_time,
+                  difficulty: coins[i].difficulty,
+                  exchange_rate: coins[i].exchange_rate,
+                  estimated_rewards: coins[i].estimated_rewards,
+                  profitability_1hr: coins[i].profitability
+                }
               };
             };
             // store most profitable coin in redis cache
