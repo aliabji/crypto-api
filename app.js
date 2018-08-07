@@ -46,30 +46,31 @@ app.get('/api/:gpu', function(req, res) {
             return data.data.coins
           })
           .then((coins) => {
-            let biggest = {"profitability": 0}
+            let biggest = new Object;
             for (var i in coins) {
-              if (coins[i].profitability > biggest.profitability) {
+              if (coins[i].profitability > biggest.profitability || biggest.profitability === undefined) {
                 biggest = coins[i]
                 biggest.name = i
-              }
-            }
+              };
+            };
             client.hset(gpu, "best", JSON.stringify(biggest), (err, val) => {
               if (err) {
                 throw err;
               } else {
+                // cached call deletes in 2 minutes (120 seconds) 
+                client.expire(gpu, 120, redis.print)
                 // return the result to the user
                 res.send({ "coins": biggest});
-              }
+              };
             });
           }).catch((response) => {
             if (response.status === 404){
               res.send('An error occurred!');
             } else {
               res.send(response);
-            }
+            };
           });
-      }
-
+      };
   });
 });
 
