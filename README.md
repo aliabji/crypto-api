@@ -2,7 +2,7 @@
 
 Install dependencies with `npm i` <br />
 Ensure PM2 is installed on your machine with `npm install pm2 -g` <br />
-Ensure Redis is installed with `npm install redis` <br />
+Ensure Redis is installed with `brew install redis` <br />
 Launch Redis with `redis-server` <br />
 Start API with `pm2 start app.js -i max` <br />
 
