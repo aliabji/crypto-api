@@ -102,7 +102,7 @@ app.get('/api/:gpu', (req, res) => {
             });
           }).catch((err) => {
             if (err === 'invalid search') {
-              res.status(404).send('Please search for either an AMD RX570 or Nvidia 1060')
+              res.status(404).send('Invalid search. Please search for either an AMD RX570 or Nvidia 1060')
             } else {
               res.status(500).send('An error occurred. Please try again.')
             }
