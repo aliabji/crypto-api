@@ -7,7 +7,7 @@ Launch Redis with `redis-server`
 Start API with `pm2 start app.js -i max`
 
 ## Endpoints:
-/api/570   <== AMD RX570
+/api/570   <== AMD RX570 <br />
 /api/1060  <== Nvidia 1060
 
 ## Notes
