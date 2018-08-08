@@ -1,10 +1,10 @@
 ## Setup
 
-Install dependencies with `npm i`
-Ensure PM2 is installed on your machine with `npm install pm2 -g`
-Ensure Redis is installed with `npm install redis`
-Launch Redis with `redis-server`
-Start API with `pm2 start app.js -i max`
+Install dependencies with `npm i` <br />
+Ensure PM2 is installed on your machine with `npm install pm2 -g` <br />
+Ensure Redis is installed with `npm install redis` <br />
+Launch Redis with `redis-server` <br />
+Start API with `pm2 start app.js -i max` <br />
 
 ## Endpoints:
 /api/570   <== AMD RX570 <br />
