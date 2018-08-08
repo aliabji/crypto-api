@@ -4,7 +4,9 @@ const responseTime = require('response-time')
 const axios = require('axios');
 const redis = require('redis');
 const compression = require('compression');
-const endpoints = require('./endpoints.js');
+const endpoints = require('./config/endpoints.js');
+const morgan = require('morgan');
+const winston = require('./config/winston');
 
 // create a new redis client and connect to our local redis instance
 const client = redis.createClient();
@@ -23,10 +25,21 @@ app.use(responseTime());
 // Compress all routes
 app.use(compression());
 
+// Error logging
+app.use(morgan('combined', { stream: winston.stream }));
+
 // centralized error handler
 app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send(someErrorMessage)
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  // winston logging
+  winston.error(`${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+  
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
 });
 
 // call the WhatToMine API to fetch information about the gpu's most profitable coin
@@ -79,8 +92,7 @@ app.get('/api/:gpu', (req, res) => {
             // store most profitable coin in redis cache
             client.hset(gpu, "best", JSON.stringify(biggest), (err, val) => {
               if (err) {
-                throw err;
-                res.send(err)
+                res.status(500).send('A server error occurred. Please try again later.')
               } else {
                 // cached call deletes in 2 minutes (120 seconds) 
                 client.expire(gpu, 120, redis.print)

@@ -1,0 +1,2 @@
+{"message":"::1 - - [08/Aug/2018:15:12:59 +0000] \"GET /api/570 HTTP/1.1\" 200 251 \"-\" \"insomnia/6.0.2\"\n","level":"info"}
+{"message":"::1 - - [08/Aug/2018:15:13:10 +0000] \"GET /api/570/s HTTP/1.1\" 404 148 \"-\" \"insomnia/6.0.2\"\n","level":"info"}
